@@ -16,21 +16,35 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+            <div style="position:fixed;top:0;left:0;width:100%;z-index:50;">
+                @if(Auth::guard('admin')->check())
+                    @include('layouts.admin-navigation')
+                @elseif(Auth::guard('staff')->check())
+                    @include('layouts.staff-navigation')
+                @else
+                    @include('layouts.navigation')
+                @endif
+            </div>
 
-            <!-- Page Heading -->
+            @if(Auth::check() || Auth::guard('admin')->check() || Auth::guard('staff')->check())
+                @include('layouts.sidebar')
+            @endif
+
             @isset($header)
-                <header class="bg-white shadow">
+                <header class="bg-white shadow" style="position:fixed;top:4rem;left:0;width:100%;z-index:45;">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
+                <div style="height: 6rem;"></div> <!-- Spacer for fixed header -->
             @endisset
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+            <div class="transition-all duration-200" style="margin-left: 5rem; padding-top: 4rem;">
+                <!-- Page Content -->
+                <main>
+                    {{ $slot }}
+                </main>
+            </div>
         </div>
     </body>
 </html>

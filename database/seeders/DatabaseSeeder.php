@@ -18,6 +18,13 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'identification_number' => 'USR001',
+            'role' => User::ROLE_USER,
+        ]);
+
+        // Call the AdminStaffSeeder
+        $this->call([
+            AdminStaffSeeder::class,
         ]);
     }
 }

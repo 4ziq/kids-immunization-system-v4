@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\AdminLoginController;
+use App\Http\Controllers\Auth\StaffLoginController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// Regular User Routes
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
@@ -35,7 +38,34 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
-Route::middleware('auth')->group(function () {
+// Admin Routes
+Route::middleware('guest:admin')->group(function () {
+    Route::get('admin/login', [AdminLoginController::class, 'create'])
+        ->name('admin.login');
+
+    Route::post('admin/login', [AdminLoginController::class, 'store']);
+});
+
+Route::middleware('auth:admin')->group(function () {
+    Route::post('admin/logout', [AdminLoginController::class, 'destroy'])
+        ->name('admin.logout');
+});
+
+// Staff Routes
+Route::middleware('guest:staff')->group(function () {
+    Route::get('staff/login', [StaffLoginController::class, 'create'])
+        ->name('staff.login');
+
+    Route::post('staff/login', [StaffLoginController::class, 'store']);
+});
+
+Route::middleware('auth:staff')->group(function () {
+    Route::post('staff/logout', [StaffLoginController::class, 'destroy'])
+        ->name('staff.logout');
+});
+
+// Common Authenticated Routes
+Route::middleware('auth:web')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

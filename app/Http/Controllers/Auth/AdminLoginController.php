@@ -9,23 +9,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class AuthenticatedSessionController extends Controller
+class AdminLoginController extends Controller
 {
     /**
-     * Display the login view.
+     * Display the admin login view.
      */
     public function create(): View
     {
-        return view('auth.login');
+        return view('auth.admin-login');
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Handle an incoming admin authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Authenticate using the web guard (for regular users)
-        if (!Auth::guard('web')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        // Authenticate using the admin guard
+        if (!Auth::guard('admin')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             return back()->withErrors([
                 'email' => trans('auth.failed'),
             ])->onlyInput('email');
@@ -33,15 +33,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     /**
-     * Destroy an authenticated session.
+     * Destroy an authenticated admin session.
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
 
         $request->session()->invalidate();
 
@@ -49,4 +49,4 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
-}
+} 

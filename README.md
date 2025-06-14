@@ -59,3 +59,114 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# Multi-Authentication System
+
+This project implements a multi-authentication system with three roles: users, admin, and staff.
+
+## Features
+
+- User registration and login
+- Role-based access control
+- Separate dashboards for each role
+- Admin and staff users can only be created through the command line or Tinker
+
+## Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   composer install
+   npm install
+   ```
+3. Copy the `.env.example` file to `.env` and configure your database
+4. Generate application key:
+   ```
+   php artisan key:generate
+   ```
+5. Run migrations and seeders:
+   ```
+   php artisan migrate --seed
+   ```
+6. Start the development server:
+   ```
+   php artisan serve
+   ```
+7. In a separate terminal, start the Vite development server:
+   ```
+   npm run dev
+   ```
+
+## Usage
+
+### User Registration
+
+Regular users can register through the registration page. They will be assigned the 'user' role automatically.
+
+### Admin and Staff Users
+
+Admin and staff users cannot register through the registration page. They must be created through the command line or Tinker.
+
+#### Using the Command Line
+
+You can create admin or staff users using the `user:create` command:
+
+```
+php artisan user:create admin "Admin Name" admin@example.com ADM001
+php artisan user:create staff "Staff Name" staff@example.com STF001
+```
+
+You can also specify a password:
+
+```
+php artisan user:create admin "Admin Name" admin@example.com ADM001 --password=yourpassword
+```
+
+#### Using Tinker
+
+You can also create admin or staff users using Tinker:
+
+```
+php artisan tinker
+```
+
+Then run:
+
+```php
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+// Create admin user
+User::create([
+    'name' => 'Admin User',
+    'email' => 'admin@example.com',
+    'password' => Hash::make('password'),
+    'identification_number' => 'ADM001',
+    'role' => User::ROLE_ADMIN,
+]);
+
+// Create staff user
+User::create([
+    'name' => 'Staff User',
+    'email' => 'staff@example.com',
+    'password' => Hash::make('password'),
+    'identification_number' => 'STF001',
+    'role' => User::ROLE_STAFF,
+]);
+```
+
+### Role-Based Access Control
+
+The system uses middleware to control access to routes based on user roles:
+
+- Regular users can access the `/dashboard` route
+- Admin users can access the `/admin/dashboard` route
+- Staff users can access the `/staff/dashboard` route
+
+## Default Users
+
+After running the seeders, the following users will be created:
+
+- Regular user: test@example.com / password
+- Admin user: admin@example.com / password
+- Staff user: staff@example.com / password
